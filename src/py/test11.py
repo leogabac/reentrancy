@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 sys.path.insert(0, '../../../icenumerics/')
 sys.path.insert(0, '../auxnumerics/')
+sys.path.insert(0, '../')
 
 import icenumerics as ice
 import concurrent.futures
@@ -196,7 +197,9 @@ if args.vertices:
     os.system(f'python compute_vertices.py {string_part}')
     os.chdir('./testing')
 
-# this might be broken, but i will test post sim
+# i think that if I run this script with the --averages flag 
+# for all global times, it should then use compute the averages
+# and saves it in the size directory.
 if args.averages:
     global_time = str(module.rtime)
     timepath = os.path.join(SIZE_PATH, global_time)
@@ -219,38 +222,3 @@ if args.averages:
             df.to_csv(os.path.join(SIZE_PATH, 'average_counts.csv'), index=False)
         else:
             df.to_csv(os.path.join(SIZE_PATH, 'average_counts.csv'), mode='a', index=False, header=False)
-
-if args.kappa:
-    field_path = os.path.join(SIZE_PATH, str(module.rtime))
-    FIELDS = next(os.walk(field_path))[1]
-
-    for i, field in tqdm(enumerate(FIELDS)):
-        path = os.path.join(SIZE_PATH, field, 'trj')
-
-        cumm_kappa = []
-        for r in REALIZATIONS:
-            # load the trj files
-            trj = pd.read_csv(os.path.join(
-                path, f'xtrj{r}.csv'), index_col=['frame', 'id'])
-            last_frame = trj.index.get_level_values('frame').unique()[-1]
-            # take the last frame state
-            sel_trj = trj.loc[idx[last_frame, :]]
-            # compute the topology and OP
-            centers, dirs, rels = vrt.trj2numpy(sel_trj)
-            dirs = dirs / np.max(dirs)
-            vrt_lattice = vrt.create_lattice(
-                params['lattice_constant'].magnitude, int(SIZE))
-            idx_lattice = vrt.indices_lattice(
-                vrt_lattice, centers, params['lattice_constant'].magnitude, int(SIZE))
-            kappa = vrt.charge_op(vrt.get_charge_lattice(idx_lattice, dirs))
-
-            data = [int(field[:-2]), r, last_frame/params['framespersec'].magnitude, kappa]
-            cumm_kappa.append(data)
-
-        df = pd.DataFrame(cumm_kappa, columns=[
-                          'field', 'realization', 't', 'kappa'])
-        if i == 0:
-            df.to_csv(os.path.join(field_path, 'kappa.csv'), index=False)
-        else:
-            df.to_csv(os.path.join(field_path, 'kappa.csv'),
-                      mode='a', index=False, header=False)
