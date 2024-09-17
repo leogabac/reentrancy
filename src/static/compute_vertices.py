@@ -16,9 +16,9 @@ from math import isclose
 from numba import jit,prange,float64,int64,complex128
 
 # own
-sys.path.insert(0, '../../icenumerics/')
-sys.path.insert(0, './auxnumerics/')
-sys.path.insert(0, './testing/')
+sys.path.insert(0, '../../../icenumerics/')
+sys.path.insert(0, '../auxnumerics/')
+sys.path.insert(0, '../')
 import icenumerics as ice
 import vertices as vrt
 
@@ -42,7 +42,7 @@ if len(parts) > 1:
 else:
     has_pre_dir = False
 
-DATA_PATH = f'../data/{usr_input}/'
+DATA_PATH = f'/home/frieren/BIG/reentrancy/{usr_input}/'
 SIZES = next(os.walk(DATA_PATH))[1]
 REALIZATIONS = 10
 
@@ -56,19 +56,19 @@ for strsize in SIZES:
         params['size'] = int(strsize)
 
     # creating the respective folders
-    trj_path = os.path.join(DATA_PATH,strsize,"trj")
-    vrt_path = os.path.join(DATA_PATH,strsize,"vertices")
-    try:
-        os.mkdir(vrt_path)
-    except:
-        pass
+    # trj_path = os.path.join(DATA_PATH,strsize,"trj")
+    # vrt_path = os.path.join(DATA_PATH,strsize,"vertices")
+    # try:
+    #     os.mkdir(vrt_path)
+    # except:
+    #     pass
 
     # creating the topology
     vrt_lattice = vrt.create_lattice(params['lattice_constant'].magnitude,params['size'])
     for i in range(REALIZATIONS+1):
 
-        trj_file = os.path.join(trj_path,f"xtrj{i}.csv")
-        vrt_file = os.path.join(vrt_path,f"vertices{i}.csv")
+        trj_file = os.path.join(DATA_PATH,strsize,f"xtrj{i}.csv")
+        vrt_file = os.path.join(DATA_PATH,strsize,f"vertices{i}.csv")
 
         if os.path.isfile(vrt_file):
             print(f'{vrt_file} exists')
@@ -76,14 +76,13 @@ for strsize in SIZES:
 
         # Importing files
         try:
-            trj = pd.read_csv(trj_file, index_col=[0,1])
-            print(f"working on... {trj_file}")
+            trj_obj = ice.trajectory(trj_file)
+            trj_obj.load()
         except:
             continue
 
         # Doing shit with the vertices
-
-        frames = trj.index.get_level_values('frame').unique().to_list()
+        frames = trj_obj.trj.index.get_level_values('frame').unique().to_list()[::20]
 
         for frame in tqdm(frames):
 
@@ -91,7 +90,7 @@ for strsize in SIZES:
             # and generate the same structure than the vertices module from icenumerics
 
             # select the current frame, i could have done a group_by('frame') tehee :p
-            sel_trj = trj.loc[idx[frame,:]]
+            sel_trj = trj_obj.slice(frame)
             centers, dirs, rels = vrt.trj2numpy(sel_trj)
 
             # here i make sure the directions are normalized

@@ -173,7 +173,7 @@ def vrt_averages(counts,framerate):
 
 def do_vertices(params,data_path):
 
-    vrt_path = os.path.join(data_path,"vertices/")
+    vrt_path = os.path.join(data_path)
     vertices = vrt_dict(vrt_path)
     counts = vrt_counts(vertices)
     vrt_ts = vrt_averages(counts,params["framespersec"].magnitude)
@@ -390,9 +390,7 @@ def correlate_bframes(params,ts,sframes, stime= 0, etime = 60):
     whichframes = [h and l for (h,l) in zip(high,low)]
     subselframes = np.array(sframes)[whichframes]
     return subselframes, [ autocorrelation(np.array(ps)[whichframes]) for ps in ts]
-    
-    
+
 def bint(x):
     return np.array([int(i) for i in x])
-
 

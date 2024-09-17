@@ -148,7 +148,8 @@ SIZE = args.size
 REALIZATIONS = list(range(1, 11))
 FIELDS = list(range(21))
 
-DATA_PATH = f'../../data/{script_name}/'
+# DATA_PATH = f'../../data/{script_name}/'
+DATA_PATH = f'/home/frieren/BIG/reentrancy/{script_name}'
 SIZE_PATH = os.path.join(DATA_PATH, str(SIZE))
 GSTRJ = pd.read_csv(f'../../data/states/ice/{SIZE}.csv', index_col='id')
 
@@ -188,14 +189,14 @@ if args.vertices:
     string_part = f'{script_name}/{SIZE}/{str(module.rtime)}'
 
     os.system('clear')
-    os.chdir('../')
-    print('CLEANING')
-    os.system(f'python cleaning.py {string_part}')
-
+    os.chdir('../static')
+    # print('CLEANING')
+    # os.system(f'python cleaning.py {string_part}')
+    #
     os.system('clear')
     print('VERTICES')
     os.system(f'python compute_vertices.py {string_part}')
-    os.chdir('./testing')
+    os.chdir('../py')
 
 # i think that if I run this script with the --averages flag 
 # for all global times, it should then use compute the averages
@@ -209,6 +210,7 @@ if args.averages:
         # this part computes the vertices average for all fields,
         # and saves them to a file
         path = os.path.join(timepath, field)
+        print(path)
         t, vrt_counts = aux.do_vertices(params, path)
 
         df = pd.DataFrame(vrt_counts, columns=[
