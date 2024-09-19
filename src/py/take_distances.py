@@ -76,16 +76,17 @@ make_headers = True
 
 
 # go through all the possible times
-for ttime in total_times:
+for ttime in tqdm(total_times):
+    print('total_time: ',ttime)
     # go through all the possible fields
     time_path = os.path.join(DATA_PATH,ttime)
     fields = [x for x in os.listdir(time_path) if x.endswith('mT')]
 
-    for field in fields:
+    for field in tqdm(fields):
         field_path = os.path.join(time_path,field)
 
         # go through the realizations
-        for realization in range(1,11):
+        for realization in tqdm(range(1,11)):
             rpath = os.path.join(field_path,f'xtrj{realization}.csv')
             ## do a bunch of stuff
 
@@ -95,26 +96,35 @@ for ttime in total_times:
             # 1 ... N | total_time | field | realization | t | theta
 
             # first horizontal
-            dfh = pd.DataFrame(tsh.transpose(),columns=hid)
+
+            dfh = pd.DataFrame(
+                np.asarray([np.mean(tsh,axis=0),np.var(tsh,axis=0)]).transpose(),
+                columns=['mean','var']
+            )
             dfh['total_time'] = [float(ttime)] * len(dfh)
-            dfh['field'] = [field] * len(dfh)
+            dfh['field'] = [float(field[:-2])] * len(dfh)
             dfh['realization'] = [realization] * len(dfh)
             dfh['t'] = frames / params['framespersec'].magnitude
             dfh['theta'] = frames / params['framespersec'].magnitude * np.pi/2/float(ttime) * 180/np.pi
 
+
             # do the save for verticals
-            dfv = pd.DataFrame(tsv.transpose(),columns=vid)
+            dfv = pd.DataFrame(
+                np.asarray([np.mean(tsv,axis=0),np.var(tsv,axis=0)]).transpose(),
+                columns=['mean','var']
+            )
             dfv['total_time'] = [float(ttime)] * len(dfv)
-            dfv['field'] = [field] * len(dfv)
+            dfv['field'] = [float(field[:-2])] * len(dfh)
             dfv['realization'] = [realization] * len(dfv)
             dfv['t'] = frames / params['framespersec'].magnitude
             dfv['theta'] = frames / params['framespersec'].magnitude * np.pi/2/float(ttime) * 180/np.pi
 
             # save everything
             if make_headers:
-                dfh.to_csv(os.path.join(DATA_PATH,'dis_hor.csv'), index=False)
-                dfv.to_csv(os.path.join(DATA_PATH,'dis_ver.csv'), index=False)
+                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor.csv'), index=False)
+                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver.csv'), index=False)
                 make_headers = False
             else:
-                dfh.to_csv(os.path.join(DATA_PATH,'dis_hor.csv'), mode='a', index=False, header=False)
-                dfv.to_csv(os.path.join(DATA_PATH,'dis_ver.csv'), mode='a', index=False, header=False)
+                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor.csv'), mode='a', index=False, header=False)
+                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver.csv'), mode='a', index=False, header=False)
+    os.system('clear')
