@@ -36,7 +36,9 @@ hor = pd.read_csv(os.path.join(DATA_PATH,'sum_hor.csv'))
 
 # here the goal is to get the average across realizations
 # for all possible ttimes (omegas) and fields
-# mean | var | total_time | field | current time | theta
+# mean | var | stdp | total_time | field | current time | theta
+# here var is the std of the mean distance across realizations
+# then stdp is the mean across realizations of the std across particles
 
 hor_global = [] # init
 
@@ -48,13 +50,14 @@ for ttime, df_t in hor.groupby('total_time'):
         for ct,df_tfr in df_tf.groupby('t'):
             # now i can finally take the average across realizations
             mean = df_tfr['mean'].mean()
+            stdp = np.mean(np.sqrt(df_tfr['var']))
             var = df_tfr['mean'].var()
             theta = df_tfr['theta'].to_list()[0]
-            cdata = [mean, var, ttime, field, ct, theta]
+            cdata = [mean, var, stdp, ttime, field, ct, theta]
             
             hor_global.append(cdata)
 
-horav = pd.DataFrame(hor_global, columns = ['mean','var','total_time','field','current_time','theta'])
+horav = pd.DataFrame(hor_global, columns = ['mean','var','stdp','total_time','field','current_time','theta'])
 horav.to_csv(os.path.join(DATA_PATH,'horav.csv'),index=False)
 
 # do the same but for the vertical
@@ -71,13 +74,14 @@ for ttime, df_t in ver.groupby('total_time'):
         for ct,df_tfr in df_tf.groupby('t'):
             # now i can finally take the average across realizations
             mean = df_tfr['mean'].mean()
+            stdp = np.mean(np.sqrt(df_tfr['var']))
             var = df_tfr['mean'].var()
             theta = df_tfr['theta'].to_list()[0]
-            cdata = [mean, var, ttime, field, ct, theta]
+            cdata = [mean, var, stdp, ttime, field, ct, theta]
             
             ver_global.append(cdata)
 
-verav = pd.DataFrame(ver_global, columns = ['mean','var','total_time','field','current_time','theta'])
+verav = pd.DataFrame(ver_global, columns = ['mean','var','stdp','total_time','field','current_time','theta'])
 verav.to_csv(os.path.join(DATA_PATH,'verav.csv'),index=False)
 
 
