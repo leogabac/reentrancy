@@ -118,10 +118,10 @@ def get_topological_charge_at_vertex(indices,dirs):
     """
     
     towards = np.array([
-        [0,-1,0], #up
-        [0,1,0], #down
-        [1,0,0], #left
-        [-1,0,0] #right
+        [0,-1,0], # up
+        [0,1,0], # down
+        [1,0,0], # left
+        [-1,0,0] # right
     ])
 
     charge = 0
@@ -131,8 +131,7 @@ def get_topological_charge_at_vertex(indices,dirs):
         # this is a dot product between direction \cdot towards
         # this will give 1 if the spin points towards the vertex
         # this will give -1 if the spin points away
-        charge += dirs[idx][0]*towards[i][0] + dirs[idx][1]*towards[i][1] + dirs[idx][2]*towards[i][2] 
-        
+        charge += dirs[idx][0]*towards[i][0] + dirs[idx][1]*towards[i][1] + dirs[idx][2]*towards[i][2]
 
     return charge
 
@@ -201,3 +200,45 @@ def charge_op(charged_vertices):
             kappa += charged_vertices[i,j]*(-1)**(i+j)
 
     return kappa
+
+@jit(nopython=True)
+def cell_chirality(spins):
+    """
+        Computes the kappa order parameter
+        ----------
+        Parameters:
+        * charged_vertices: Array (N,N) where (i,j) has the charge of vertex (i,j)
+    """
+
+    # this is the positive chirality template
+    # which is counter clockwise
+    towards = np.array([
+        [-1,0,0], # up
+        [1,0,0], # down
+        [0,-1,0], # left
+        [0,1,0] # right
+    ])
+    dotp = np.sum(np.sum(spins * towards,axis=1))
+
+    if np.isclose(4, dotp, atol=0.01):
+        return 1
+    elif np.isclose(-4, dotp, atol=0.01):
+        return -1
+    else:
+        return 0
+
+def get_chir_lattice(dirs, idx_lattice):
+
+    rows, cols, _ = idx_lattice.shape
+    chir = np.zeros((rows,cols))
+
+    for i in range(rows):
+        for j in range(rows):
+            spins = dirs[idx_lattice[i,j,:]]
+            chir[i,j] = cell_chirality(spins)
+
+    return chir
+
+
+
+

@@ -34,9 +34,9 @@ TEST = 'test11'
 SIZE = 10
 
 DATA_PATH = os.path.join(DRIVE,PROJECT,TEST,str(SIZE))
-fh = open(os.path.join(DATA_PATH,'dis_ver.csv'),'r')
+fh = open(os.path.join(DATA_PATH,'dis_hor_rp.csv'),'r')
 
-target = os.path.join(DATA_PATH,'disver_20mT.csv')
+target = os.path.join(DATA_PATH,'dishorrp_20mT.csv')
 
 # for reference, the field column is the 101 element, 0-based index
 
@@ -47,7 +47,7 @@ for line in fh:
 
     # if the line contains the field value i am interested in 
     # then write that line
-    if field_value=='20mT' or field_value=='field':
+    if field_value=='20.0' or field_value=='field':
         with open(target,'a') as file_obj:
             file_obj.write(line)
 

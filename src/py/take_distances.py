@@ -48,18 +48,23 @@ def get_distances(filepath):
         rels = ptrj[['cx','cy','cz']]
         dirs = ptrj[['dx','dy','dz']].to_numpy() / params['trap_sep'].magnitude # normalize to have unitary directions
 
+        # to get the parallel component, I just need to compute the dot product of
+        # rel . abs(dir)
+
+        rparallel = np.sum(rels.values * np.abs(dirs),axis=1)
+
         if aux.is_horizontal(dirs[0]):
             # substract the initial position and take the norm
-            d = (rels - rels.iloc[0]).apply(lambda x: x**2).sum(axis=1).apply(np.sqrt).values
+            d = np.abs((rparallel - rparallel[0]))
             ts_horizontal.append(d)
             hid.append(pid)
         else:
-            d = (rels - rels.iloc[0]).apply(lambda x: x**2).sum(axis=1).apply(np.sqrt).values
+            d = np.abs((rparallel - rparallel[0]))
             ts_vertical.append(d)
             vid.append(pid)
 
     # now that we have everything is time to save into disk
-    return  frames, np.asarray(hid), np.asarray(vid), np.asarray(ts_horizontal), np.asarray(ts_vertical)
+    return frames, np.asarray(hid), np.asarray(vid), np.asarray(ts_horizontal), np.asarray(ts_vertical)
 
 
 DRIVE = '/home/frieren/BIG/'
@@ -97,9 +102,13 @@ for ttime in tqdm(total_times):
 
             # first horizontal
 
+            # dfh = pd.DataFrame(
+            #     np.asarray([np.mean(tsh,axis=0),np.var(tsh,axis=0)]).transpose(),
+            #     columns=['mean','var']
+            # )
             dfh = pd.DataFrame(
-                np.asarray([np.mean(tsh,axis=0),np.var(tsh,axis=0)]).transpose(),
-                columns=['mean','var']
+                tsh.transpose(),
+                columns=[hid]
             )
             dfh['total_time'] = [float(ttime)] * len(dfh)
             dfh['field'] = [float(field[:-2])] * len(dfh)
@@ -110,9 +119,13 @@ for ttime in tqdm(total_times):
 
             # do the save for verticals
             dfv = pd.DataFrame(
-                np.asarray([np.mean(tsv,axis=0),np.var(tsv,axis=0)]).transpose(),
-                columns=['mean','var']
+                tsv.transpose(),
+                columns=[vid]
             )
+            # dfv = pd.DataFrame(
+            #     np.asarray([np.mean(tsv,axis=0),np.var(tsv,axis=0)]).transpose(),
+            #     columns=['mean','var']
+            # )
             dfv['total_time'] = [float(ttime)] * len(dfv)
             dfv['field'] = [float(field[:-2])] * len(dfh)
             dfv['realization'] = [realization] * len(dfv)
@@ -121,10 +134,10 @@ for ttime in tqdm(total_times):
 
             # save everything
             if make_headers:
-                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor.csv'), index=False)
-                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver.csv'), index=False)
+                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor_rparallel.csv'), index=False)
+                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver_rparallel.csv'), index=False)
                 make_headers = False
             else:
-                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor.csv'), mode='a', index=False, header=False)
-                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver.csv'), mode='a', index=False, header=False)
+                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor_rparallel.csv'), mode='a', index=False, header=False)
+                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver_rparallel.csv'), mode='a', index=False, header=False)
     os.system('clear')
