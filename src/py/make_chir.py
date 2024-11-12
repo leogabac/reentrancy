@@ -35,17 +35,16 @@ REALIZATIONS = list(range(1,11))
 a = params['lattice_constant'].magnitude
 
 makeheaders = True
-for w in OMEGAS:
-    print(f'total_time = {w}')
+for w in tqdm(OMEGAS, desc='Total time'):
+    tqdm.write(f'Current value {w} s')
     # I will focus on 20mT
     # here wf_path is for w and field
     fields = [x[:-2] for x in os.listdir(os.path.join(DATA_PATH,w)) if x.endswith('mT')]
 
-    for field in tqdm(fields):
+    for field in tqdm(fields, desc='Field'):
+
 
         wf_path = os.path.join(DATA_PATH,w,f'{field}mT')
-        # here I wil go trj by trj computing the OP
-        # TODO: get this from the vrt file directly
         cumm_chirs = []
         for r in REALIZATIONS:
             # load the trj file
@@ -56,14 +55,13 @@ for w in OMEGAS:
             # create the shifted lattice at center of squares
             chir_lattice = vrt.create_lattice(params['lattice_constant'].magnitude, int(SIZE), spos=(a/2,a/2))
 
-            for frame in tqdm(frames):
+            for frame in frames:
 
                 # why am i computing lots of stuff for all frames?
                 # the centers don't necesarily come in the same order each frame
                 # i did not want to fix that, so i just went full wasting computing effort mode
 
                 sel_trj = trj.trj.xs(frame,level='frame')
-                # now for each frame
                 centers, dirs, rels = vrt.trj2numpy(sel_trj)
                 dirs = dirs / np.max(dirs)
                 # create the indices for linked spins
@@ -76,7 +74,6 @@ for w in OMEGAS:
                 data = [r, sel_trj.t[0], chir, field, w]
                 cumm_chirs.append(data)
 
-        os.system('clear')
         # after all realizations, just save
         df = pd.DataFrame(cumm_chirs, columns=['realization', 't', 'kappa', 'field', 'total_time'])
         if makeheaders:
@@ -84,3 +81,6 @@ for w in OMEGAS:
             makeheaders = False
         else:
             df.to_csv(os.path.join(DATA_PATH, 'chirs_all.csv'), mode='a',index=False, header=False)
+
+    os.system('clear')
+
