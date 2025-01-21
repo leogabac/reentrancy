@@ -6,13 +6,13 @@ import pandas as pd
 
 from tqdm import tqdm
 
-sys.path.insert(0, '../../icenumerics/')
-sys.path.insert(0, './auxnumerics/')
-sys.path.insert(0, './testing/')
+sys.path.insert(0, '../../../icenumerics/')
+sys.path.insert(0, '../auxnumerics/')
+sys.path.insert(0, '../')
 import icenumerics as ice
 
 
-from thermal_parameters import params
+from parameters import params
 import auxiliary as aux
 import montecarlo_colloids as mc
 
@@ -49,7 +49,7 @@ def save_ice(data_path,N):
     col1.to_ctrj().to_csv(os.path.join(data_path,'ice',f'{N}.csv'))
 
 
-data_path = "../data/small_states/"
+data_path = "/home/frieren/Documents/projects/reentrancy/data/bistates/"
 
-for size in tqdm(range(10,31,1)):
+for size in tqdm(range(10,11,1)):
     save_ice(data_path,size)
