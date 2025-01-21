@@ -1,8 +1,8 @@
-# ================================================
+# =============================================================================
 # Here the goal is to take some very big files
 # and make them smaller by saving a subset 
 # of rows that follow a particular contidion
-# ================================================
+# =============================================================================
 
 import os
 import sys

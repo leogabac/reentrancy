@@ -1,3 +1,11 @@
+# =============================================================================
+# Here the goal is to compute the particle displacements as a function of time
+# that is R(t) = |r(t) - r(0)|
+# the code saves a file in the data folder with the schema 
+# mentioned in the code
+# =============================================================================
+
+
 import os
 import sys
 

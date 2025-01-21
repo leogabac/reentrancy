@@ -14,17 +14,17 @@ python test11.py --help
 
 ## Long-Running Jobs
 
-- **make_chir.py**/
+- **make_chir.py**  
 Computes the chirality order parameter for all frames in bulk. All $\omega$, $B$ at given size.
 
-- **make_kappa.py**/
+- **make_kappa.py**  
 Computes the charge order parameter for all frames in bulk. All $\omega$, $B$ at given size.
 
-- **take_distances.py**/
+- **take_distances.py**  
 Computes the travelled distance (parallel) at any time $\mathbf{r}(t) = | \mathbf{r}(t) - \mathbf{r}(0) |$ in bulk.
 
 Schema:
 | 1 ... N | total_time | field | realization | t | theta
 
-- **trim_distances.py**/
+- **trim_distances.py**  
 Fils from `take_distances.py` are too big to handle. This script trims a lighter version for 20mT only.
