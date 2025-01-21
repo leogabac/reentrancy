@@ -2,7 +2,9 @@
 
 Dynamics of Colloidal Ice when the external magnetic field $\mathbf{B}$ is rotated.
 
+
 - Paper Title (Temptative): Magnetically-Driven Diffusionless Tranformations and Ergodicity Breaking in Square Anisotropic Colloidal Ice
+- Authors: [leogabac](https://github.com/leogabac/), and [aortiza](https://github.com/aortiza).
 
 ## Installation
 To install this project, clone the repository into 
@@ -16,6 +18,7 @@ git clone https://github.com/leogabac/icenumerics.git ~/Documents/icenumerics --
 
 ## File tree
 This is a brief overview and explanation of the file tree of this project.
+> Each directory has its own _README_ with code documentation.
 ```
 .
 ├── src
@@ -30,6 +33,12 @@ This is a brief overview and explanation of the file tree of this project.
 ├── README.md
 ├── requirements.txt
 ```
-Each directory has its own _README_ with code documentation.
+ The main idea behind this file structure is to 
+1. Generate data using a script from the `py` directory. (Long-running jobs)
+2. Import the generated data into a notebook from the `notebook` directory for analysis, visualization and figure making.
+
+This intended workflow comes from an opinionated programmer (myself) who finds Jupyter Notebooks rather unstable for long-running jobs, but still uses them for interactive visualization.
+
+
 
 

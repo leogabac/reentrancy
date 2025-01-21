@@ -114,7 +114,6 @@ parser = argparse.ArgumentParser(description="Run a rotation z -> x for many dif
 parser.add_argument('-s', '--sims', action='store_true', help='run simulations')
 parser.add_argument('-v', '--vertices', action='store_true', help='run vertices')
 parser.add_argument('-a', '--averages', action='store_true', help='run vertices averages')
-parser.add_argument('-k', '--kappa', action='store_true', help='run kappa order parameter')
 
 # positional arguments
 parser.add_argument('size', type=str, help='The size input')
@@ -127,7 +126,6 @@ if not sth_passed:
     args.sims = True
     args.vertices = True
     args.averages = True
-    args.kappa = True
 
 # importing the field
 script_name = sys.argv[0][:-3]

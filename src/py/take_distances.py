@@ -134,10 +134,10 @@ for ttime in tqdm(total_times):
 
             # save everything
             if make_headers:
-                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor_rparallel.csv'), index=False)
-                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver_rparallel.csv'), index=False)
+                dfh.to_csv(os.path.join(DATA_PATH,'dis_hor_rp.csv'), index=False)
+                dfv.to_csv(os.path.join(DATA_PATH,'dis_ver_rp.csv'), index=False)
                 make_headers = False
             else:
-                dfh.to_csv(os.path.join(DATA_PATH,'sum_hor_rparallel.csv'), mode='a', index=False, header=False)
-                dfv.to_csv(os.path.join(DATA_PATH,'sum_ver_rparallel.csv'), mode='a', index=False, header=False)
+                dfh.to_csv(os.path.join(DATA_PATH,'dis_hor_rp.csv'), mode='a', index=False, header=False)
+                dfv.to_csv(os.path.join(DATA_PATH,'dis_ver_rp.csv'), mode='a', index=False, header=False)
     os.system('clear')
