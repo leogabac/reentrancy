@@ -2,9 +2,10 @@
 
 Dynamics of Colloidal Ice when the external magnetic field $\mathbf{B}$ is rotated.
 
-
 - Paper Title (Temptative): Magnetically-Driven Diffusionless Tranformations and Ergodicity Breaking in Square Anisotropic Colloidal Ice
 - Authors: [leogabac](https://github.com/leogabac/), and [aortiza](https://github.com/aortiza).
+
+For detailed information, go to the [DOCUMENTATION](./docs/index.md).
 
 ## Installation
 To install this project, clone the repository into 
